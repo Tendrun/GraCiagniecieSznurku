@@ -15,7 +15,7 @@ public class Server {
             try {
                 System.out.println("Serwer czeka");
                 serverSocket.accept();
-                System.out.println("Serwer przujal gracza");
+                System.out.println("Serwer przyjal gracza");
             }
             catch (IOException e) {
                 System.out.println(e);

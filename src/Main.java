@@ -10,13 +10,15 @@ public class Main {
 
     static void CreateComponents(){
         gameManager = new GameManager(4444);
+        gameManager.createGame();
         gameManager.createServer();
-        gameManager.createPlayers(4);
+        gameManager.createPlayers(12);
     }
 
     static void StartGame(){
         gameManager.startServer();
         gameManager.connectClientsToServer();
+        gameManager.startGame();
     }
 
 }

@@ -11,15 +11,17 @@ public class Player {
     public enum Team {
         left, right;
     }
-    public Team team;
+    Team team;
+    Game game;
 
-    Player(Team team, Socket clientSocket, int port) {
+    Player(Game game, Team team, Socket clientSocket, int port) {
+        this.game = game;
         this.team = team;
         this.clientSocket = clientSocket;
         this.port = port;
     }
 
-    public void ConnectToServer() {
+    public void connectToServer() {
         try {
             InetAddress inetAddress = InetAddress.getByName("localhost");
             SocketAddress socketAddress = new InetSocketAddress(inetAddress, port);
@@ -31,6 +33,9 @@ public class Player {
     }
 
     public void startPlaying() {
-        System.out.println("I play");
+        while (true) {
+            if (game.currentGameState == Game.GameState.GameIsOn) game.pullLine(0.01f, team);
+            else break;
+        }
     }
 }
