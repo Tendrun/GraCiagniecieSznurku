@@ -1,38 +1,44 @@
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.Arrays;
+import java.net.*;
 
 public class GameManager {
 
-    Server server;
-    PlayerClient[] playerClients;
+    ServerThread serverThread;
+    PlayerThread[] playerThreads;
+    int port;
+    GameManager(int port){
+        this.port = port;
+    }
 
-    public void createServer(int port) {
+    public void createServer() {
         try {
             ServerSocket serverSocket = new ServerSocket(port);
-            server = new Server(serverSocket);
+            Server server = new Server(serverSocket);
+            serverThread = new ServerThread(server);
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
     }
 
-    public void createClients(int amountOfClients) {
-
-        PlayerClient[] newPlayerClients = new PlayerClient[amountOfClients];
-
+    public void createPlayers(int amountOfClients) {
+        playerThreads = new PlayerThread[amountOfClients];
         for (int i = 0; i < amountOfClients; i++) {
-
-            PlayerClient.Team team = i < (float)amountOfClients/2 ? PlayerClient.Team.left : PlayerClient.Team.right;
+            Player.Team team = i < (float)amountOfClients/2 ? Player.Team.left : Player.Team.right;
             Socket clientSocket = new Socket();
-            PlayerClient playerClient = new PlayerClient(PlayerClient.Team.left, clientSocket);
-            newPlayerClients[i] = playerClient;
+            Player player = new Player(Player.Team.left, clientSocket, port);
+            System.out.println("Stworzono gracza " + i + " gra on w druzynie " + team);
+            playerThreads[i] = new PlayerThread(player);
         }
+    }
 
-        playerClients = Arrays.copyOf(newPlayerClients, amountOfClients);
+    public void startServer(){
+        serverThread.start();
+    }
+
+    public void connectClientsToServer(){
+        for (PlayerThread playerThread : playerThreads) {
+            playerThread.start();
+        }
     }
 
 }
