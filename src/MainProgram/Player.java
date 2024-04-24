@@ -24,9 +24,12 @@ public class Player {
     int line;
     PlayerSendPacket gameUpdateData;
 
-    Player(Team team, Socket clientSocket, int port) {
+    int msDelay;
+
+    Player(Team team, Socket clientSocket, int port, int msDelay) {
         this.clientSocket = clientSocket;
         this.port = port;
+        this.msDelay = msDelay;
         gameUpdateData = new PlayerSendPacket(linePullForce, team);
     }
 
@@ -48,6 +51,11 @@ public class Player {
         while(true){
             pullLine();
             UpdateBar();
+            try {
+                Thread.sleep(msDelay);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -62,11 +70,10 @@ public class Player {
 
     void UpdateBar(){
         while(true) {
-            System.out.println("Pzed Update Bara");
             try {
                 in = new ObjectInputStream (clientSocket.getInputStream());
                 GameSendPacket ReceivedPacket = (GameSendPacket) in.readObject();
-                System.out.println(ReceivedPacket);
+                line = ReceivedPacket.line;
             } catch (IOException | ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }

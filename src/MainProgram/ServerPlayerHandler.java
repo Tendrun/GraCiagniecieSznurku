@@ -9,13 +9,13 @@ import DataPattern.PlayerSendPacket;
 public class ServerPlayerHandler extends Thread {
 
     Socket playerSocket;
-    int line;
     ObjectInputStream in;
     ObjectOutputStream out;
+    Game game;
 
-    public ServerPlayerHandler(Socket playerSocket, int line){
+    public ServerPlayerHandler(Socket playerSocket, Game game){
         this.playerSocket = playerSocket;
-        this.line = line;
+        this.game = game;
         try {
             in = new ObjectInputStream(playerSocket.getInputStream());
             out = new ObjectOutputStream(playerSocket.getOutputStream());
@@ -26,15 +26,17 @@ public class ServerPlayerHandler extends Thread {
 
     @Override
     public void run() {
-        waitForPlayerInput();`
-        sendToPlayerChanges();
+        while(true){
+            waitForPlayerInput();
+            sendToPlayerChanges();
+        }
     }
 
     void waitForPlayerInput(){
         System.out.println("Wait for player input");
         try {
             PlayerSendPacket ReceivedPacket = (PlayerSendPacket) in.readObject();
-            System.out.println(ReceivedPacket);
+            game.pullLine(ReceivedPacket.linePullForce, ReceivedPacket.gameState);
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -42,7 +44,7 @@ public class ServerPlayerHandler extends Thread {
 
     void sendToPlayerChanges() {
         try {
-            GameSendPacket gameSendPacket = new GameSendPacket(line);
+            GameSendPacket gameSendPacket = new GameSendPacket(game.line);
             out.writeObject(gameSendPacket);
             out.flush();
         } catch (IOException e) {

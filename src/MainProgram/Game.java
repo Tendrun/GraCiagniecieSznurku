@@ -1,7 +1,6 @@
 package MainProgram;
 
 public class Game {
-
     int line = 0;
     int threshold = 100;
 
@@ -14,9 +13,6 @@ public class Game {
     public void pullLine(int amount, Player.Team team){
         if(team == Player.Team.left) line -= amount;
         else if(team == Player.Team.right) line += amount;
-
-
-
         System.out.println("line = " + line);
         checkWinner();
     }

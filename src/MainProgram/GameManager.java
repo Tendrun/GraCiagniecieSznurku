@@ -9,9 +9,11 @@ public class GameManager {
     PlayerThread[] playerThreads;
     int port;
     Game game;
+    int msDelay;
 
-    GameManager(int port){
+    GameManager(int port, int msDelay){
         this.port = port;
+        this.msDelay = msDelay;
     }
 
     public void createServer() {
@@ -33,7 +35,7 @@ public class GameManager {
         for (int i = 0; i < amountOfClients; i++) {
             Player.Team team = i < (float)amountOfClients/2 ? Player.Team.left : Player.Team.right;
             Socket clientSocket = new Socket();
-            Player player = new Player(Player.Team.left, clientSocket, port);
+            Player player = new Player(Player.Team.left, clientSocket, port, msDelay);
             System.out.println("Stworzono gracza " + i + " gra on w druzynie " + team);
             playerThreads[i] = new PlayerThread(player);
         }
