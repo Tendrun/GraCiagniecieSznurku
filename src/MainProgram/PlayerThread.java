@@ -1,3 +1,5 @@
+package MainProgram;
+
 public class PlayerThread extends Thread {
     Player player;
 

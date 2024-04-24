@@ -1,7 +1,9 @@
+package MainProgram;
+
 public class Game {
 
-    float line = 0;
-    float threshold = 50;
+    int line = 0;
+    int threshold = 100;
 
     public enum GameState {
         LeftWon, RightWon, GameIsOn
@@ -9,7 +11,7 @@ public class Game {
 
     GameState currentGameState = GameState.GameIsOn;
 
-    public void pullLine(float amount, Player.Team team){
+    public void pullLine(int amount, Player.Team team){
         if(team == Player.Team.left) line -= amount;
         else if(team == Player.Team.right) line += amount;
 

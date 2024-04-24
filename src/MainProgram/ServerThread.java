@@ -1,3 +1,5 @@
+package MainProgram;
+
 public class ServerThread extends Thread {
 
     Server server;

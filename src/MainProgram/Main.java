@@ -1,3 +1,5 @@
+package MainProgram;
+
 public class Main {
 
     static GameManager gameManager;
@@ -12,7 +14,7 @@ public class Main {
         gameManager = new GameManager(4444);
         gameManager.createGame();
         gameManager.createServer();
-        gameManager.createPlayers(4);
+        gameManager.createPlayers(1);
     }
 
     static void StartGame(){

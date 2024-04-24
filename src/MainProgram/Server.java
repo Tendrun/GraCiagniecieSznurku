@@ -1,8 +1,8 @@
-import java.io.BufferedReader;
+package MainProgram;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.List;
 
 public class Server {
 
@@ -20,9 +20,8 @@ public class Server {
             try {
                 System.out.println("Serwer czeka");
                 Socket s = serverSocket.accept();
-                ServerPlayerHandler t = new ServerPlayerHandler(s);
+                ServerPlayerHandler t = new ServerPlayerHandler(s, game.line);
                 t.start();
-
                 System.out.println("Serwer przyjal gracza");
             }
             catch (IOException e) {
