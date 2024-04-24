@@ -15,7 +15,7 @@ public class GameManager {
     public void createServer() {
         try {
             ServerSocket serverSocket = new ServerSocket(port);
-            Server server = new Server(serverSocket);
+            Server server = new Server(serverSocket, game);
             serverThread = new ServerThread(server);
         } catch (IOException ex) {
             throw new RuntimeException(ex);
@@ -31,7 +31,7 @@ public class GameManager {
         for (int i = 0; i < amountOfClients; i++) {
             Player.Team team = i < (float)amountOfClients/2 ? Player.Team.left : Player.Team.right;
             Socket clientSocket = new Socket();
-            Player player = new Player(game, Player.Team.left, clientSocket, port);
+            Player player = new Player(Player.Team.left, clientSocket, port);
             System.out.println("Stworzono gracza " + i + " gra on w druzynie " + team);
             playerThreads[i] = new PlayerThread(player);
         }

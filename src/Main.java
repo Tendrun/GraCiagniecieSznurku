@@ -12,7 +12,7 @@ public class Main {
         gameManager = new GameManager(4444);
         gameManager.createGame();
         gameManager.createServer();
-        gameManager.createPlayers(12);
+        gameManager.createPlayers(4);
     }
 
     static void StartGame(){
