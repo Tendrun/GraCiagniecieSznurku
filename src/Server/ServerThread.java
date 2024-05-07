@@ -1,10 +1,10 @@
-package MainProgram;
+package Server;
 
 public class ServerThread extends Thread {
 
     Server server;
 
-    ServerThread(Server server){
+    public ServerThread(Server server){
         this.server = server;
     }
 

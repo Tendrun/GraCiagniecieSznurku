@@ -1,4 +1,4 @@
-package MainProgram;
+package Player;
 
 import java.io.*;
 import java.net.InetAddress;
@@ -6,8 +6,8 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 
-import DataPattern.GameSendPacket;
-import DataPattern.PlayerSendPacket;
+import DataPattern.GameStatePacket;
+import DataPattern.PlayerStatePacket;
 
 public class Player {
 
@@ -22,15 +22,14 @@ public class Player {
     }
     int linePullForce = 1;
     int line;
-    PlayerSendPacket gameUpdateData;
-
+    PlayerStatePacket gameUpdateData;
     int msDelay;
 
-    Player(Team team, Socket clientSocket, int port, int msDelay) {
+    public Player(Team team, Socket clientSocket, int port, int msDelay) {
         this.clientSocket = clientSocket;
         this.port = port;
         this.msDelay = msDelay;
-        gameUpdateData = new PlayerSendPacket(linePullForce, team);
+        gameUpdateData = new PlayerStatePacket(linePullForce, team);
     }
 
     public void connectToServer() {
@@ -40,12 +39,21 @@ public class Player {
             clientSocket.connect(socketAddress);
             out = new ObjectOutputStream(clientSocket.getOutputStream());
             out.flush();
+            in = new ObjectInputStream (clientSocket.getInputStream());
         }
         catch (IOException e){
             System.out.println(e);
         }
     }
 
+    public void disconnectFromServer(){
+        try {
+            out.close();
+            in.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public void startPlaying() {
         while(true){
@@ -69,14 +77,11 @@ public class Player {
     }
 
     void UpdateBar(){
-        while(true) {
-            try {
-                in = new ObjectInputStream (clientSocket.getInputStream());
-                GameSendPacket ReceivedPacket = (GameSendPacket) in.readObject();
-                line = ReceivedPacket.line;
-            } catch (IOException | ClassNotFoundException e) {
-                throw new RuntimeException(e);
-            }
+        try {
+            GameStatePacket ReceivedPacket = (GameStatePacket) in.readObject();
+            line = ReceivedPacket.line;
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 }

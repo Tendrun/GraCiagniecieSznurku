@@ -1,20 +1,21 @@
 package MainProgram;
 
+import Game.ProgramManager;
+
 public class Main {
 
-    static GameManager gameManager;
+    static ProgramManager gameManager;
 
     public static void main(String[] args) {
-
         CreateComponents();
         StartGame();
     }
 
     static void CreateComponents(){
-        gameManager = new GameManager(4444, 1000);
-        gameManager.createGame();
+        gameManager = new ProgramManager(4444, 1000);
+        gameManager.createGame(100);
         gameManager.createServer();
-        gameManager.createPlayers(1);
+        gameManager.createPlayers(2);
     }
 
     static void StartGame(){

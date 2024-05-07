@@ -1,9 +1,11 @@
-package MainProgram;
+package Player;
+
+import Player.Player;
 
 public class PlayerThread extends Thread {
     Player player;
 
-    PlayerThread(Player player){
+    public PlayerThread(Player player){
         this.player = player;
     }
 

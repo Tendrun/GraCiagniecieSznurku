@@ -1,15 +1,15 @@
 package DataPattern;
 
 
-import MainProgram.Player;
+import Player.Player;
 
 import java.io.Serializable;
 
-public class PlayerSendPacket implements Serializable {
+public class PlayerStatePacket implements Serializable {
     public int linePullForce;
     public Player.Team gameState;
 
-    public PlayerSendPacket(int linePullForce, Player.Team gameState){
+    public PlayerStatePacket(int linePullForce, Player.Team gameState){
         this.linePullForce = linePullForce;
         this.gameState = gameState;
     }
