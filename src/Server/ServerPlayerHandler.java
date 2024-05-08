@@ -2,8 +2,7 @@ package Server;
 
 import java.io.*;
 import java.net.Socket;
-import DataPattern.GameStatePacket;
-import DataPattern.PlayerStatePacket;
+
 import Game.Game;
 
 public class ServerPlayerHandler {
@@ -12,8 +11,8 @@ public class ServerPlayerHandler {
     ObjectInputStream in;
     ObjectOutputStream out;
     Game game;
-    PlayerStreamOutput playerStreamOutput;
-    PlayerStreamInput playerStreamInput;
+    ServerStreamOutput playerStreamOutput;
+    ServerStreamInput playerStreamInput;
 
     public ServerPlayerHandler(Socket playerSocket, Game game){
         this.playerSocket = playerSocket;
@@ -27,9 +26,9 @@ public class ServerPlayerHandler {
     }
 
     public void start(){
-        playerStreamOutput = new PlayerStreamOutput(out, game);
+        playerStreamOutput = new ServerStreamOutput(out, game);
         playerStreamOutput.start();
-        playerStreamInput = new PlayerStreamInput(in, game);
+        playerStreamInput = new ServerStreamInput(in, game);
         playerStreamInput.start();
     }
 

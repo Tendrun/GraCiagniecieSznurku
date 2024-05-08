@@ -34,8 +34,7 @@ public class Server {
             }
         }
     }
-
-
+    
     public void endGame() {
 
     }

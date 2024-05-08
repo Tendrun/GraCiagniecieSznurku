@@ -8,6 +8,7 @@ import java.net.SocketAddress;
 
 import DataPattern.GameStatePacket;
 import DataPattern.PlayerStatePacket;
+import Game.Game;
 
 public class Player {
 
@@ -15,6 +16,7 @@ public class Player {
     ObjectOutputStream out;
     ObjectInputStream in;
     int port;
+    Game.GameState gameState;
 
 
     public enum Team {
@@ -22,14 +24,17 @@ public class Player {
     }
     int linePullForce = 1;
     int line;
-    PlayerStatePacket gameUpdateData;
+    PlayerStatePacket playerStatePacket;
     int msDelay;
+    PlayerStreamOutput playerStreamOutput;
+    PlayerStreamInput playerStreamInput;
 
     public Player(Team team, Socket clientSocket, int port, int msDelay) {
         this.clientSocket = clientSocket;
         this.port = port;
         this.msDelay = msDelay;
-        gameUpdateData = new PlayerStatePacket(linePullForce, team);
+        linePullForce = 1000;
+        playerStatePacket = new PlayerStatePacket(linePullForce, team);
     }
 
     public void connectToServer() {
@@ -56,32 +61,36 @@ public class Player {
     }
 
     public void startPlaying() {
-        while(true){
-            pullLine();
-            UpdateBar();
-            try {
-                Thread.sleep(msDelay);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+        sendDataFromServer();
+        readDataFromServer();
+    }
+
+    void readDataFromServer(){
+        playerStreamInput = new PlayerStreamInput(in, this);
+        playerStreamInput.start();
+    }
+
+    void sendDataFromServer(){
+        playerStreamOutput = new PlayerStreamOutput(out, this, msDelay);
+        playerStreamOutput.start();
+    }
+
+    public PlayerStatePacket getPlayerStatePacket(){
+        return playerStatePacket;
+    }
+
+    void updatePlayerData(GameStatePacket ReceivedPacket){
+        line = ReceivedPacket.line;
+        gameState = ReceivedPacket.currentGameState;
+
+        if(gameState == Game.GameState.RightWon || gameState == Game.GameState.LeftWon){
+            gameOver();
         }
     }
 
-    void pullLine() {
-        try {
-            out.writeObject(gameUpdateData);
-            out.flush();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    void UpdateBar(){
-        try {
-            GameStatePacket ReceivedPacket = (GameStatePacket) in.readObject();
-            line = ReceivedPacket.line;
-        } catch (IOException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+    void gameOver(){
+        disconnectFromServer();
+        //playerStreamOutput.interrupt();
+        //playerStreamInput.interrupt();
     }
 }
