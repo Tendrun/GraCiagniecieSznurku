@@ -43,7 +43,6 @@ public class Server {
     public void sendUpdateToPlayers(){
         for (int i = 0; i < serverPlayerHandlerList.size(); i++) {
             serverPlayerHandlerList.get(i).playerStreamOutput.sendToPlayerChanges();
-            System.out.println("Send message to " + i);
         }
     }
 

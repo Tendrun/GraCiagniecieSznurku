@@ -5,6 +5,7 @@ import DataPattern.PlayerStatePacket;
 import Game.Game;
 
 import java.io.IOException;
+import java.io.InvalidClassException;
 import java.io.ObjectInputStream;
 
 public class PlayerStreamInput extends Thread {
@@ -27,8 +28,10 @@ public class PlayerStreamInput extends Thread {
                 GameStatePacket ReceivedPacket = (GameStatePacket) in.readObject();
                 player.updatePlayerData(ReceivedPacket);
             }
+        } catch (InvalidClassException e){
+            System.err.println("InvalidClassException :(((");
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            System.err.println("PAKIETTTT");
         } catch (IOException e) {
             player.disconnectFromServer();
         }

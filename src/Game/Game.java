@@ -33,8 +33,6 @@ public class Game {
 
         if(team == Player.Team.left) line -= amount;
         else if(team == Player.Team.right) line += amount;
-        System.out.println("line = " + line);
-        System.out.println("amount = " + amount + "Player team" + team);
         checkWinner();
     }
 
@@ -47,5 +45,7 @@ public class Game {
             currentGameState = GameState.LeftWon;
             System.out.println("LEFT TEAM WINSSS !!!!!!!!!");
         }
+
+        System.out.println("line = " + line);
     }
 }

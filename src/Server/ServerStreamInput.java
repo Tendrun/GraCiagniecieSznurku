@@ -5,6 +5,7 @@ import Game.Game;
 
 import java.io.EOFException;
 import java.io.IOException;
+import java.io.InvalidClassException;
 import java.io.ObjectInputStream;
 
 public class ServerStreamInput extends Thread {
@@ -28,10 +29,11 @@ public class ServerStreamInput extends Thread {
                 PlayerStatePacket ReceivedPacket = (PlayerStatePacket) in.readObject();
                 game.pullLine(ReceivedPacket.linePullForce, ReceivedPacket.gameState);
             }
+        } catch (InvalidClassException e){
+            System.err.println("InvalidClassException :(((");
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-        catch (IOException e){
+            System.err.println("PAKIETTTT");
+        } catch (IOException e) {
             serverPlayerHandler.disconnectPlayer();
         }
     }

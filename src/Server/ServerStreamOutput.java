@@ -4,9 +4,10 @@ import DataPattern.GameStatePacket;
 import Game.Game;
 
 import java.io.IOException;
+import java.io.InvalidClassException;
 import java.io.ObjectOutputStream;
 
-public class ServerStreamOutput extends Thread {
+public class ServerStreamOutput  {
 
     ObjectOutputStream out;
     Game game;
@@ -16,19 +17,15 @@ public class ServerStreamOutput extends Thread {
         this.out = out;
         this.serverPlayerHandler = serverPlayerHandler;
     }
-    @Override
-    public void run() {
-        //sendToPlayerChanges();
-    }
-
-    public void sendToPlayerChanges() {
+    public synchronized void sendToPlayerChanges() {
             try {
                 GameStatePacket gameSendPacket = game.getGameState();
-                out. writeObject(gameSendPacket);
+                out.writeObject(gameSendPacket);
                 out.flush();
+            } catch (InvalidClassException e){
+                System.err.println("InvalidClassException :(((");
             } catch (IOException e) {
-                throw new RuntimeException(e);
-                //serverPlayerHandler.disconnectPlayer();
+                serverPlayerHandler.disconnectPlayer();
             }
     }
 }

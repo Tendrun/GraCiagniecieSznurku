@@ -4,6 +4,7 @@ import DataPattern.GameStatePacket;
 import Game.Game;
 
 import java.io.IOException;
+import java.io.InvalidClassException;
 import java.io.ObjectOutputStream;
 
 public class PlayerStreamOutput extends Thread {
@@ -29,6 +30,8 @@ public class PlayerStreamOutput extends Thread {
                 out.flush();
                 Thread.sleep(msDelay);
             }
+        } catch (InvalidClassException e){
+            System.err.println("InvalidClassException :(((");
         } catch (InterruptedException e){
             throw new RuntimeException(e);
         } catch (IOException e) {

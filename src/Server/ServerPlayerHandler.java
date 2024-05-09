@@ -27,7 +27,7 @@ public class ServerPlayerHandler {
 
     public void start(){
         playerStreamOutput = new ServerStreamOutput(out, game, this);
-        playerStreamOutput.start();
+        //playerStreamOutput.start();
         playerStreamInput = new ServerStreamInput(in, game, this);
         playerStreamInput.start();
     }
@@ -39,7 +39,7 @@ public class ServerPlayerHandler {
         } catch (IOException e) {
             System.out.println("Player disconnected");
         }
-        playerStreamOutput.interrupt();
+        //playerStreamOutput.interrupt();
         playerStreamInput.interrupt();
     }
 }
