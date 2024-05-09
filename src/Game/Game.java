@@ -11,8 +11,9 @@ public class Game {
     int winThreshold;
     Server server;
 
-    public Game(int winThreshold){
+    public Game(int winThreshold, Server server){
         this.winThreshold = winThreshold;
+        this.server = server;
     }
 
 
@@ -28,6 +29,7 @@ public class Game {
 
     public void pullLine(int amount, Player.Team team){
         if(currentGameState == GameState.LeftWon || currentGameState == GameState.RightWon) return;
+        server.sendUpdateToPlayers();
 
         if(team == Player.Team.left) line -= amount;
         else if(team == Player.Team.right) line += amount;

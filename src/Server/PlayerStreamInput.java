@@ -10,24 +10,29 @@ public class PlayerStreamInput extends Thread {
 
     ObjectInputStream in;
     Game game;
+    ServerPlayerHandler serverPlayerHandler;
 
-    public PlayerStreamInput(ObjectInputStream in, Game game) {
+    public PlayerStreamInput(ObjectInputStream in, Game game, ServerPlayerHandler serverPlayerHandler) {
         this.in = in;
         this.game = game;
+        this.serverPlayerHandler = serverPlayerHandler;
     }
     @Override
     public void run() {
-        while(true){
-            waitForPlayerInput();
-        }
+        waitForPlayerInput();
     }
 
     void waitForPlayerInput(){
         try {
-            PlayerStatePacket ReceivedPacket = (PlayerStatePacket) in.readObject();
-            game.pullLine(ReceivedPacket.linePullForce, ReceivedPacket.gameState);
-        } catch (IOException | ClassNotFoundException e) {
+            while(true) {
+                PlayerStatePacket ReceivedPacket = (PlayerStatePacket) in.readObject();
+                game.pullLine(ReceivedPacket.linePullForce, ReceivedPacket.gameState);
+            }
+        } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
+        }
+        catch (IOException e) {
+            serverPlayerHandler.disconnectPlayer();
         }
     }
 }

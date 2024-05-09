@@ -10,25 +10,25 @@ public class ServerStreamOutput extends Thread {
 
     ObjectOutputStream out;
     Game game;
-
-    public ServerStreamOutput(ObjectOutputStream out, Game game){
+    ServerPlayerHandler serverPlayerHandler;
+    public ServerStreamOutput(ObjectOutputStream out, Game game, ServerPlayerHandler serverPlayerHandler){
         this.game = game;
         this.out = out;
+        this.serverPlayerHandler = serverPlayerHandler;
     }
     @Override
     public void run() {
-        sendToPlayerChanges();
+        //sendToPlayerChanges();
     }
 
-    void sendToPlayerChanges() {
-        while(true) {
+    public void sendToPlayerChanges() {
             try {
                 GameStatePacket gameSendPacket = game.getGameState();
-                out.writeObject(gameSendPacket);
+                out. writeObject(gameSendPacket);
                 out.flush();
             } catch (IOException e) {
                 throw new RuntimeException(e);
+                //serverPlayerHandler.disconnectPlayer();
             }
-        }
     }
 }

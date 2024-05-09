@@ -19,22 +19,20 @@ public class PlayerStreamOutput extends Thread {
     }
     @Override
     public void run() {
-        while(true){
-            sendToServerChanges();
-            try {
-                Thread.sleep(msDelay);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
+        sendToServerChanges();
     }
 
     void sendToServerChanges() {
         try {
-            out.writeObject(player.getPlayerStatePacket());
-            out.flush();
-        } catch (IOException e) {
+            while(true){
+                out.writeObject(player.getPlayerStatePacket());
+                out.flush();
+                Thread.sleep(msDelay);
+            }
+        } catch (InterruptedException e){
             throw new RuntimeException(e);
+        } catch (IOException e) {
+            player.disconnectFromServer();
         }
     }
 }

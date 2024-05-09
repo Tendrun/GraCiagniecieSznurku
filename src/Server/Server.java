@@ -1,5 +1,6 @@
 package Server;
 
+import DataPattern.GameStatePacket;
 import Game.Game;
 
 import java.io.IOException;
@@ -14,10 +15,14 @@ public class Server {
     Game game;
     List<ServerPlayerHandler> serverPlayerHandlerList;
 
-    public Server(ServerSocket server, Game game) {
+    public Server(ServerSocket server, int winThreshold) {
         this.serverSocket = server;
-        this.game = game;
         serverPlayerHandlerList = new ArrayList<ServerPlayerHandler>();
+        game = new Game(winThreshold, this);
+    }
+
+    public void createGame(){
+
     }
 
     public void runServer() {
@@ -34,8 +39,15 @@ public class Server {
             }
         }
     }
-    
-    public void endGame() {
+
+    public void sendUpdateToPlayers(){
+        for (int i = 0; i < serverPlayerHandlerList.size(); i++) {
+            serverPlayerHandlerList.get(i).playerStreamOutput.sendToPlayerChanges();
+            System.out.println("Send message to " + i);
+        }
+    }
+
+    public void endGame(){
 
     }
 }

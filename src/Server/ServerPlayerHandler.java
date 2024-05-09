@@ -26,20 +26,20 @@ public class ServerPlayerHandler {
     }
 
     public void start(){
-        playerStreamOutput = new ServerStreamOutput(out, game);
+        playerStreamOutput = new ServerStreamOutput(out, game, this);
         playerStreamOutput.start();
-        playerStreamInput = new ServerStreamInput(in, game);
+        playerStreamInput = new ServerStreamInput(in, game, this);
         playerStreamInput.start();
     }
 
     public void disconnectPlayer(){
-        playerStreamOutput.interrupt();
-        playerStreamInput.interrupt();
         try {
             in.close();
             out.close();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println("Player disconnected");
         }
+        playerStreamOutput.interrupt();
+        playerStreamInput.interrupt();
     }
 }

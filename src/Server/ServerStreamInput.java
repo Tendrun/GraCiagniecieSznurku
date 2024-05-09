@@ -11,10 +11,11 @@ public class ServerStreamInput extends Thread {
 
     ObjectInputStream in;
     Game game;
-
-    public ServerStreamInput(ObjectInputStream in, Game game) {
+    ServerPlayerHandler serverPlayerHandler;
+    public ServerStreamInput(ObjectInputStream in, Game game, ServerPlayerHandler serverPlayerHandler) {
         this.in = in;
         this.game = game;
+        this.serverPlayerHandler = serverPlayerHandler;
     }
     @Override
     public void run() {
@@ -31,11 +32,7 @@ public class ServerStreamInput extends Thread {
             throw new RuntimeException(e);
         }
         catch (IOException e){
-            try {
-                in.close();
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
+            serverPlayerHandler.disconnectPlayer();
         }
     }
 }

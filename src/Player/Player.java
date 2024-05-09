@@ -33,7 +33,6 @@ public class Player {
         this.clientSocket = clientSocket;
         this.port = port;
         this.msDelay = msDelay;
-        linePullForce = 1000;
         playerStatePacket = new PlayerStatePacket(linePullForce, team);
     }
 
@@ -48,15 +47,6 @@ public class Player {
         }
         catch (IOException e){
             System.out.println(e);
-        }
-    }
-
-    public void disconnectFromServer(){
-        try {
-            out.close();
-            in.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
     }
 
@@ -92,5 +82,14 @@ public class Player {
         disconnectFromServer();
         //playerStreamOutput.interrupt();
         //playerStreamInput.interrupt();
+    }
+
+    void disconnectFromServer(){
+        try {
+            out.close();
+            in.close();
+        } catch (IOException e) {
+
+        }
     }
 }

@@ -27,8 +27,10 @@ public class PlayerStreamInput extends Thread {
                 GameStatePacket ReceivedPacket = (GameStatePacket) in.readObject();
                 player.updatePlayerData(ReceivedPacket);
             }
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
+        } catch (IOException e) {
+            player.disconnectFromServer();
         }
     }
 }
