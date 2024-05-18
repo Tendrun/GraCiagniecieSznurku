@@ -33,6 +33,7 @@ public class PlayerStreamInput extends Thread {
         } catch (ClassNotFoundException e) {
             System.err.println("PAKIETTTT");
         } catch (IOException e) {
+            System.err.println("IOException");
             player.disconnectFromServer();
         }
     }

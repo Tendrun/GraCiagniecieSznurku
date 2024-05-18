@@ -12,9 +12,9 @@ public class Main {
     }
 
     static void CreateComponents(){
-        gameManager = new ProgramManager(4444, 1000);
+        gameManager = new ProgramManager(4444, 2000,  0);
         gameManager.createServer();
-        gameManager.createPlayers(222);
+        gameManager.createPlayers(33);
     }
 
     static void StartGame(){

@@ -1,6 +1,7 @@
 package Player;
 
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -10,6 +11,8 @@ import DataPattern.GameStatePacket;
 import DataPattern.PlayerStatePacket;
 import Game.Game;
 
+import javax.swing.*;
+
 public class Player {
 
     Socket clientSocket;
@@ -18,24 +21,49 @@ public class Player {
     int port;
     Game.GameState gameState;
 
+    PlayerUI playerUI;
 
     public enum Team {
         left, right;
     }
     int linePullForce = 1;
-    int line;
+    int line = 0;
     PlayerStatePacket playerStatePacket;
     int msDelay;
+    int msDelayOffset;
     PlayerStreamOutput playerStreamOutput;
     PlayerStreamInput playerStreamInput;
 
-    public Player(Team team, Socket clientSocket, int port, int msDelay) {
+    String playerName;
+
+    public Player(Team team, Socket clientSocket, int port, int msDelay, int msDelayOffset, String playerName) {
+        this.playerName = playerName;
         this.clientSocket = clientSocket;
         this.port = port;
         this.msDelay = msDelay;
+        this.msDelayOffset = msDelayOffset;
         playerStatePacket = new PlayerStatePacket(linePullForce, team);
+        try {
+            createUI();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
     }
 
+    public void createUI() throws InterruptedException, InvocationTargetException {
+        SwingUtilities.invokeAndWait(new Runnable() {
+            public void run() {
+                playerUI = new PlayerUI(playerName);
+                playerUI.setVisible(true);
+            }
+        });
+    }
+
+    public void updateUI(){
+        playerUI.updateUI(line);
+    }
     public void connectToServer() {
         try {
             InetAddress inetAddress = InetAddress.getByName("localhost");
@@ -61,7 +89,7 @@ public class Player {
     }
 
     void sendDataFromServer(){
-        playerStreamOutput = new PlayerStreamOutput(out, this, msDelay);
+        playerStreamOutput = new PlayerStreamOutput(out, this, msDelay + msDelayOffset);
         playerStreamOutput.start();
     }
 
@@ -72,7 +100,7 @@ public class Player {
     void updatePlayerData(GameStatePacket ReceivedPacket){
         line = ReceivedPacket.line;
         gameState = ReceivedPacket.currentGameState;
-
+        updateUI();
         if(gameState == Game.GameState.RightWon || gameState == Game.GameState.LeftWon){
             gameOver();
         }
@@ -80,11 +108,10 @@ public class Player {
 
     void gameOver(){
         disconnectFromServer();
-        //playerStreamOutput.interrupt();
-        //playerStreamInput.interrupt();
     }
 
     void disconnectFromServer(){
+        System.out.println("Disconnected from server");
         try {
             out.close();
             in.close();

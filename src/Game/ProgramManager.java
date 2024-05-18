@@ -13,10 +13,12 @@ public class ProgramManager {
     PlayerThread[] playerThreads;
     int port;
     int msDelayPullingLine;
+    int msDelayOffset;
 
-    public ProgramManager(int port, int msDelayPullingLine){
+    public ProgramManager(int port, int msDelayPullingLine, int msDelayOffset){
         this.port = port;
         this.msDelayPullingLine = msDelayPullingLine;
+        this.msDelayOffset = msDelayOffset;
     }
 
     public void createServer() {
@@ -34,7 +36,7 @@ public class ProgramManager {
         for (int i = 0; i < amountOfPlayers; i++) {
             Player.Team team = i < (float)amountOfPlayers/2 ? Player.Team.left : Player.Team.right;
             Socket clientSocket = new Socket();
-            Player player = new Player(team, clientSocket, port, msDelayPullingLine);
+            Player player = new Player(team, clientSocket, port, msDelayPullingLine, i * msDelayOffset, "Player " + i);
             System.out.println("Stworzono gracza " + i + " gra on w druzynie " + team);
             playerThreads[i] = new PlayerThread(player);
         }

@@ -35,6 +35,7 @@ public class PlayerStreamOutput extends Thread {
         } catch (InterruptedException e){
             throw new RuntimeException(e);
         } catch (IOException e) {
+            System.err.println("IOException");
             player.disconnectFromServer();
         }
     }
