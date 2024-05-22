@@ -85,7 +85,7 @@ public class Game extends JFrame {
             barLeftTeam.setValue(line * -1);
             barRightTeam.setValue(0);
         } else if (line > 0){
-            barRightTeam.setValue(0);
+            barLeftTeam.setValue(0);
             barRightTeam.setValue(line);
         }
         else if (line == 0){

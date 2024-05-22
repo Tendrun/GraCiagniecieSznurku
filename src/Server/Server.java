@@ -49,7 +49,7 @@ public class Server {
     }
 
     public void closePlayerHandler(int index) {
-        serverPlayerHandlerMap.remove(index);
+        //serverPlayerHandlerMap.remove(index);
     }
 
     public void sendUpdateToPlayers(){
