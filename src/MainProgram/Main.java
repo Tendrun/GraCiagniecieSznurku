@@ -14,7 +14,7 @@ public class Main {
     static void CreateComponents(){
         gameManager = new ProgramManager(4444, 2000,  0);
         gameManager.createServer();
-        //gameManager.createPlayers(1);
+        //gameManager.createPlayers(10);
     }
 
     static void StartGame(){

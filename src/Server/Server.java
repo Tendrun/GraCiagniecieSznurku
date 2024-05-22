@@ -21,10 +21,6 @@ public class Server {
         game = new Game(winThreshold, this);
     }
 
-    public void createGame(){
-
-    }
-
     public void runServer() {
         while (true){
             try {

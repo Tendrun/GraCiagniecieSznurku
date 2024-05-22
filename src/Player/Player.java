@@ -10,6 +10,7 @@ import java.net.SocketAddress;
 import DataPattern.GameStatePacket;
 import DataPattern.PlayerStatePacket;
 import Game.Game;
+import Player.UI.PlayerUIMediator;
 
 import javax.swing.*;
 
@@ -20,7 +21,7 @@ public class Player {
     int port;
     Game.GameState gameState;
 
-    static PlayerUI playerUI;
+    static PlayerUIMediator playerUI;
 
     public enum Team {
         left, right;
@@ -38,24 +39,11 @@ public class Player {
     String playerName;
 
     public Player(Team team, Socket clientSocket, int port, int msDelay, int msDelayOffset, String playerName) {
-        this.playerName = playerName;
         this.clientSocket = clientSocket;
         this.port = port;
         this.msDelay = msDelay;
         this.msDelayOffset = msDelayOffset;
         playerStatePacket = new PlayerStatePacket(linePullForce, team);
-        try {
-            createUI(this);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public static void main(String args[]){
-        //Player.Team team = i < (float)amountOfPlayers/2 ? Player.Team.left : Player.Team.right;
-        Socket clientSocket = new Socket();
         try {
             createUI();
         } catch (InterruptedException e) {
@@ -63,15 +51,28 @@ public class Player {
         } catch (InvocationTargetException e) {
             throw new RuntimeException(e);
         }
-        //System.out.println("Stworzono gracza " + i + " gra on w druzynie " + team);
+    }
+
+    public Player() {
+        port = 4444;
+        clientSocket = new Socket();
+
+        try {
+            createUI();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void createUI() throws InterruptedException, InvocationTargetException {
         SwingUtilities.invokeAndWait(new Runnable() {
             public void run() {
-                playerUI = new PlayerUI(Player.this);
+                playerUI = new PlayerUIMediator(Player.this);
             }
         });
+        playerUI.goToMenu();
     }
 
     public void setPlayerName(String playerName){
@@ -88,15 +89,35 @@ public class Player {
     }
     public void connectToServer() {
         try {
+            clientSocket = new Socket();
             InetAddress inetAddress = InetAddress.getByName("localhost");
             SocketAddress socketAddress = new InetSocketAddress(inetAddress, port);
             clientSocket.connect(socketAddress);
             out = new ObjectOutputStream(clientSocket.getOutputStream());
             out.flush();
             in = new ObjectInputStream (clientSocket.getInputStream());
+            playerUI.goToGame();
+            readDataFromServer();
         }
         catch (IOException e){
             System.out.println(e);
+        }
+    }
+
+    public void sendToServerChanges() {
+        try {
+            while(true){
+                out.writeObject(getPlayerStatePacket());
+                out.flush();
+                Thread.sleep(msDelay);
+            }
+        } catch (InvalidClassException e){
+            System.err.println("InvalidClassException :(((");
+        } catch (InterruptedException e){
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            System.err.println("IOException");
+            disconnectFromServer();
         }
     }
 
@@ -132,11 +153,12 @@ public class Player {
         disconnectFromServer();
     }
 
-    void disconnectFromServer(){
+    public void disconnectFromServer(){
         System.out.println("Disconnected from server");
         try {
             out.close();
             in.close();
+            playerUI.goToMenu();
         } catch (IOException e) {
 
         }

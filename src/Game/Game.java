@@ -2,7 +2,7 @@ package Game;
 
 import DataPattern.GameStatePacket;
 import Player.Player;
-import Player.PlayerUI;
+import Player.UI.*;
 import Server.Server;
 
 import javax.swing.*;
