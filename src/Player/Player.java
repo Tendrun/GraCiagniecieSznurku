@@ -14,18 +14,19 @@ import Game.Game;
 import javax.swing.*;
 
 public class Player {
-
     Socket clientSocket;
     ObjectOutputStream out;
     ObjectInputStream in;
     int port;
     Game.GameState gameState;
 
-    PlayerUI playerUI;
+    static PlayerUI playerUI;
 
     public enum Team {
         left, right;
     }
+    Team team;
+
     int linePullForce = 1;
     int line = 0;
     PlayerStatePacket playerStatePacket;
@@ -44,7 +45,7 @@ public class Player {
         this.msDelayOffset = msDelayOffset;
         playerStatePacket = new PlayerStatePacket(linePullForce, team);
         try {
-            createUI();
+            createUI(this);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         } catch (InvocationTargetException e) {
@@ -52,13 +53,34 @@ public class Player {
         }
     }
 
+    public static void main(String args[]){
+        //Player.Team team = i < (float)amountOfPlayers/2 ? Player.Team.left : Player.Team.right;
+        Socket clientSocket = new Socket();
+        try {
+            createUI();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
+        //System.out.println("Stworzono gracza " + i + " gra on w druzynie " + team);
+    }
+
     public void createUI() throws InterruptedException, InvocationTargetException {
         SwingUtilities.invokeAndWait(new Runnable() {
             public void run() {
-                playerUI = new PlayerUI(playerName);
-                playerUI.setVisible(true);
+                playerUI = new PlayerUI(Player.this);
             }
         });
+    }
+
+    public void setPlayerName(String playerName){
+        this.playerName = playerName;
+    }
+
+    public void setPlayerTeam(Team team){
+        this.team = team;
+        playerStatePacket = new PlayerStatePacket(linePullForce, team);
     }
 
     public void updateUI(){

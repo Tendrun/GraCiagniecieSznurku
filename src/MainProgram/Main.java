@@ -14,13 +14,13 @@ public class Main {
     static void CreateComponents(){
         gameManager = new ProgramManager(4444, 2000,  0);
         gameManager.createServer();
-        gameManager.createPlayers(33);
+        //gameManager.createPlayers(1);
     }
 
     static void StartGame(){
         gameManager.startServer();
-        gameManager.connectClientsToServer();
-        gameManager.startGame();
+        //gameManager.connectClientsToServer();
+        //gameManager.startGame();
     }
 
 }

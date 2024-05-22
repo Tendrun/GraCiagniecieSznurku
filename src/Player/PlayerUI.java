@@ -1,27 +1,50 @@
 package Player;
 
 import Graphic.RightToLeftProgressBar;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
-public class PlayerUI extends JFrame {
+public class PlayerUI {
+
+    JFrame menuFrame;
     RightToLeftProgressBar barLeftTeam;
     JProgressBar barRightTeam;
     JLabel lineField;
-
+    JPanel panel;
     String playerName;
-    public PlayerUI(String playerName) {
-        this.playerName = playerName;
-        createComponents();
+    Player player;
+    public PlayerUI(Player player) {
+        this.player = player;
+
+        panel = new JPanel();
+        panel.setBackground(Color.GRAY);
+        //setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //setSize(800, 400);
+        //this.add(panel, BorderLayout.CENTER);
+
+        JButton button = new JButton("");
+        panel.add(button);
+
+        createMenuComponents();
     }
 
-    void createComponents(){
-        setTitle(playerName);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(400, 200);
-        setLayout(new BorderLayout());
+    void createMenuComponents() {
+        menuFrame = new JFrame("Main Menu");
+        menuFrame.setVisible(true);
+        JButton buttonConnectToServer = new JButton("Połącz się z serwerem");
+        buttonConnectToServer.setBounds(0,0,95,300);
+        buttonConnectToServer.setVisible(true);
+        buttonConnectToServer.addActionListener(deleteMenuComponents());
+        panel.add(buttonConnectToServer, BorderLayout.EAST);
+    }
+
+    ActionListener deleteMenuComponents(){
+        System.out.println("PRZYCISK");
+        return null;
+    }
+
+    void createGameComponents(){
 
         JLabel leftText = new JLabel("Left Team");
         barLeftTeam = new RightToLeftProgressBar(0,100);
@@ -40,16 +63,11 @@ public class PlayerUI extends JFrame {
 
         lineField = new JLabel("Line = " + 0);
 
-        JPanel panel = new JPanel();
-
-        panel.setBackground(Color.GRAY);
         panel.add(leftText, BorderLayout.WEST);
         panel.add(barLeftTeam, BorderLayout.WEST);
         panel.add(barRightTeam, BorderLayout.EAST);
         panel.add(rightText, BorderLayout.EAST);
         panel.add(lineField);
-
-        this.add(panel);
     }
 
     public void updateUI(int line){
