@@ -3,12 +3,12 @@ package Player.UI;
 import Graphic.RightToLeftProgressBar;
 import Player.Player;
 
+import Game.Game.GameState;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
 public class Game extends JFrame {
-
     JLabel lineField;
     RightToLeftProgressBar barLeftTeam;
     JProgressBar barRightTeam;
@@ -16,10 +16,12 @@ public class Game extends JFrame {
     JPanel panel;
     ActionListener pullLine;
     ActionListener disconnectFromServer;
+    JLabel gameStateField;
 
-    public Game(String title, ActionListener disconnectFromServer, ActionListener pullLine) {
+    public Game(Player player, String title, ActionListener disconnectFromServer, ActionListener pullLine) {
         super(title);
 
+        this.player = player;
         this.disconnectFromServer = disconnectFromServer;
         this.pullLine = pullLine;
 
@@ -58,12 +60,17 @@ public class Game extends JFrame {
 
         //pull line
         JButton buttonPullLine = new JButton("Ciagnij line");
-        buttonConnectToServer.setBounds(0,0,95,300);
-        buttonConnectToServer.setVisible(true);
-        buttonConnectToServer.addActionListener(pullLine);
+        buttonPullLine.setBounds(0,0,95,300);
+        buttonPullLine.setVisible(true);
+        buttonPullLine.addActionListener(pullLine);
         panel.add(buttonPullLine, BorderLayout.EAST);
 
         lineField = new JLabel("Line = " + 0);
+
+        //Game state
+        gameStateField = new JLabel("");
+        panel.add(gameStateField, BorderLayout.CENTER);
+        gameStateField.setVisible(true);
 
 
         panel.add(leftText, BorderLayout.WEST);
@@ -73,7 +80,7 @@ public class Game extends JFrame {
         panel.add(lineField);
     }
 
-    public void updateUI(int line){
+    public void updateUI(int line, GameState gameState){
         if (line < 0){
             barLeftTeam.setValue(line * -1);
             barRightTeam.setValue(0);
@@ -85,7 +92,15 @@ public class Game extends JFrame {
             barLeftTeam.setValue(0);
             barRightTeam.setValue(0);
         }
+        if(gameState == GameState.LeftWon){
+            gameStateField.setText("LEFT SIDE HAS WON");
+        }
 
+        else if(gameState == GameState.RightWon){
+            gameStateField.setText("Right SIDE HAS WON");
+        }
+
+        System.out.println("Game " + gameState);
         lineField.setText("Line = " + line);
     }
 }

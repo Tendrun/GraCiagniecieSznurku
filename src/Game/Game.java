@@ -33,11 +33,9 @@ public class Game {
         if(currentGameState == GameState.LeftWon || currentGameState == GameState.RightWon) return;
         if(team == Player.Team.left) line.addAndGet(-amount);
         else if(team == Player.Team.right) line.addAndGet(amount);
-
+        checkWinner();
         System.out.println("line = " + line);
         server.sendUpdateToPlayers();
-
-        checkWinner();
     }
 
     void checkWinner(){

@@ -6,18 +6,20 @@ import Game.Game;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class Server {
-
     ServerSocket serverSocket;
     Game game;
-    List<ServerPlayerHandler> serverPlayerHandlerList;
+    Map<Integer, ServerPlayerHandler> serverPlayerHandlerMap;
 
-    public Server(ServerSocket server, int winThreshold) {
-        this.serverSocket = server;
-        serverPlayerHandlerList = new ArrayList<ServerPlayerHandler>();
+    public Server(int winThreshold) {
+        try {
+            serverSocket = new ServerSocket(4444);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        serverPlayerHandlerMap = new HashMap<Integer, ServerPlayerHandler>();
         game = new Game(winThreshold, this);
     }
 
@@ -25,9 +27,11 @@ public class Server {
         while (true){
             try {
                 Socket s = serverSocket.accept();
-                ServerPlayerHandler serverPlayerHandler = new ServerPlayerHandler(s, game);
+                int key = findFreeKey();
+                ServerPlayerHandler serverPlayerHandler = new ServerPlayerHandler(s, game, key, this);
                 serverPlayerHandler.start();
-                serverPlayerHandlerList.add(serverPlayerHandler);
+                serverPlayerHandlerMap.put(key, serverPlayerHandler);
+                sendUpdateToPlayers();
                 System.out.println("Serwer przyjal gracza");
             }
             catch (IOException e) {
@@ -36,13 +40,26 @@ public class Server {
         }
     }
 
-    public void sendUpdateToPlayers(){
-        for (int i = 0; i < serverPlayerHandlerList.size(); i++) {
-            serverPlayerHandlerList.get(i).playerStreamOutput.sendToPlayerChanges();
+    public int findFreeKey() {
+        int key = 0;
+        while (serverPlayerHandlerMap.containsKey(key)) {
+            key++;
         }
+        return key;
     }
 
-    public void endGame(){
+    public void closePlayerHandler(int index) {
+        serverPlayerHandlerMap.remove(index);
+    }
 
+    public void sendUpdateToPlayers(){
+        for (int i = 0; i < serverPlayerHandlerMap.size(); i++) {
+            try {
+                serverPlayerHandlerMap.get(i).playerStreamOutput.sendToPlayerChanges();
+            }
+            catch (NullPointerException e) {
+                closePlayerHandler(i);
+            }
+        }
     }
 }

@@ -8,7 +8,6 @@ import java.io.InvalidClassException;
 import java.io.ObjectOutputStream;
 
 public class ServerStreamOutput  {
-
     ObjectOutputStream out;
     Game game;
     ServerPlayerHandler serverPlayerHandler;

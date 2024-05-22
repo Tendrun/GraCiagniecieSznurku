@@ -19,49 +19,36 @@ public class Player {
     ObjectOutputStream out;
     ObjectInputStream in;
     int port;
-    Game.GameState gameState;
-
+    Game.GameState gameState = null;
     static PlayerUIMediator playerUI;
-
     public enum Team {
-        left, right;
+        left("left"),
+        right("right");
+
+        private final String teamName;
+
+        Team(String teamName) {
+            this.teamName = teamName;
+        }
+
+        @Override
+        public String toString() {
+            return teamName;
+        }
     }
     Team team;
-
     int linePullForce = 1;
     int line = 0;
     PlayerStatePacket playerStatePacket;
-    int msDelay;
-    int msDelayOffset;
-    PlayerStreamOutput playerStreamOutput;
     PlayerStreamInput playerStreamInput;
 
-    String playerName;
-
-    public Player(Team team, Socket clientSocket, int port, int msDelay, int msDelayOffset, String playerName) {
-        this.clientSocket = clientSocket;
-        this.port = port;
-        this.msDelay = msDelay;
-        this.msDelayOffset = msDelayOffset;
-        playerStatePacket = new PlayerStatePacket(linePullForce, team);
-        try {
-            createUI();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     public Player() {
         port = 4444;
         clientSocket = new Socket();
-
         try {
             createUI();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        } catch (InvocationTargetException e) {
+        } catch (InterruptedException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
     }
@@ -75,17 +62,13 @@ public class Player {
         playerUI.goToMenu();
     }
 
-    public void setPlayerName(String playerName){
-        this.playerName = playerName;
-    }
-
     public void setPlayerTeam(Team team){
         this.team = team;
         playerStatePacket = new PlayerStatePacket(linePullForce, team);
     }
 
     public void updateUI(){
-        playerUI.updateUI(line);
+        playerUI.updateUI(line, gameState);
     }
     public void connectToServer() {
         try {
@@ -106,34 +89,20 @@ public class Player {
 
     public void sendToServerChanges() {
         try {
-            while(true){
-                out.writeObject(getPlayerStatePacket());
-                out.flush();
-                Thread.sleep(msDelay);
-            }
+            out.writeObject(getPlayerStatePacket());
+            out.flush();
         } catch (InvalidClassException e){
             System.err.println("InvalidClassException :(((");
-        } catch (InterruptedException e){
-            throw new RuntimeException(e);
         } catch (IOException e) {
             System.err.println("IOException");
             disconnectFromServer();
         }
     }
 
-    public void startPlaying() {
-        sendDataFromServer();
-        readDataFromServer();
-    }
 
     void readDataFromServer(){
         playerStreamInput = new PlayerStreamInput(in, this);
         playerStreamInput.start();
-    }
-
-    void sendDataFromServer(){
-        playerStreamOutput = new PlayerStreamOutput(out, this, msDelay + msDelayOffset);
-        playerStreamOutput.start();
     }
 
     public PlayerStatePacket getPlayerStatePacket(){
@@ -145,7 +114,7 @@ public class Player {
         gameState = ReceivedPacket.currentGameState;
         updateUI();
         if(gameState == Game.GameState.RightWon || gameState == Game.GameState.LeftWon){
-            gameOver();
+            //gameOver();
         }
     }
 

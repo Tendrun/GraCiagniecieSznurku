@@ -13,10 +13,14 @@ public class ServerPlayerHandler {
     Game game;
     ServerStreamOutput playerStreamOutput;
     ServerStreamInput playerStreamInput;
+    Integer key;
+    Server server;
 
-    public ServerPlayerHandler(Socket playerSocket, Game game){
+    public ServerPlayerHandler(Socket playerSocket, Game game, Integer key, Server server){
         this.playerSocket = playerSocket;
         this.game = game;
+        this.key = key;
+        this.server = server;
         try {
             in = new ObjectInputStream(playerSocket.getInputStream());
             out = new ObjectOutputStream(playerSocket.getOutputStream());
@@ -39,5 +43,6 @@ public class ServerPlayerHandler {
             System.out.println("Player disconnected");
         }
         playerStreamInput.interrupt();
+        server.closePlayerHandler(key);
     }
 }

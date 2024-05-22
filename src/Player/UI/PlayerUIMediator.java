@@ -1,25 +1,18 @@
 package Player.UI;
 
-import Graphic.RightToLeftProgressBar;
+import Game.Game.GameState;
 import Player.Player;
-
-import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class PlayerUIMediator {
-
-    JLabel lineField;
     Menu menuFrame;
     Game gameFrame;
-    RightToLeftProgressBar barLeftTeam;
-    JProgressBar barRightTeam;
     Player player;
     public PlayerUIMediator(Player player) {
         this.player = player;
-        menuFrame = new Menu("Main Menu", connectToServer());
-        gameFrame = new Game("Game", disconnectFromServer(), pullLine());
+        menuFrame = new Menu(player, "Main Menu", connectToServer());
+        gameFrame = new Game(player, "Game", disconnectFromServer(), pullLine());
     }
 
     public void goToMenu() {
@@ -36,7 +29,6 @@ public class PlayerUIMediator {
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("PRZYCISK");
                 player.connectToServer();
             }
         };
@@ -46,7 +38,6 @@ public class PlayerUIMediator {
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("PRZYCISK");
                 player.disconnectFromServer();
             }
         };
@@ -56,13 +47,12 @@ public class PlayerUIMediator {
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("PRZYCISK");
                 player.sendToServerChanges();
             }
         };
     }
 
-    public void updateUI(int line){
-        gameFrame.updateUI(line);
+    public void updateUI(int line, GameState gameState){
+        gameFrame.updateUI(line, gameState);
     }
 }
